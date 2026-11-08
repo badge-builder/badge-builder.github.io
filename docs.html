@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#ffffff">
     <meta name="description" content="Copyable JavaScript, CSS, shape, icon, gradient, and image examples, plus the HTTP API reference for badge-builder.">
+    <link rel="canonical" href="https://badge-builder.github.io/docs.html">
     <title>Documentation — badge-builder</title>
     <style>
       :root {
@@ -426,11 +427,11 @@ await writeFile("tests.svg", svg, "utf8");</code></pre></div>
               <h3>Request or embed a badge</h3>
               <p>Use the query form or the <code>/badge/:label/:message</code> shorthand. Complex options such as <code>blocks</code> and <code>gradient</code> are URL-encoded JSON.</p>
             </div>
-            <div class="codebox"><button class="copy" type="button">Copy</button><pre><code>https://&lt;worker-host&gt;/badge?label=build&amp;message=passing&amp;color=success
+            <div class="codebox"><button class="copy" type="button">Copy</button><pre><code>https://badge-builder-api.badge-builder.workers.dev/badge?label=build&amp;message=passing&amp;color=success
 
-https://&lt;worker-host&gt;/badge/build/passing?color=success&amp;shape=dots
+https://badge-builder-api.badge-builder.workers.dev/badge/build/passing?color=success&amp;shape=dots
 
-&lt;img src="https://&lt;worker-host&gt;/badge/build/passing?color=success"
+&lt;img src="https://badge-builder-api.badge-builder.workers.dev/badge/build/passing?color=success"
      alt="build: passing"&gt;</code></pre></div>
           </div>
           <div class="table-wrap">
