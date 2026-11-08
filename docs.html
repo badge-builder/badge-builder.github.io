@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="Copyable JavaScript, CSS, shape, icon, gradient, and image examples, plus the HTTP API reference for badge-builder.">
+    <title>Documentation — badge-builder</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #17191c;
+        background: #fff;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        --muted: #687078;
+        --line: #e3e5e7;
+        --green: #16866a;
+        --code: #17191c;
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+      body { min-width: 320px; margin: 0; background: #fff; }
+      a { color: #14785f; text-underline-offset: 3px; }
+      a:hover { color: #0c5d49; }
+      code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .shell { width: min(1010px, calc(100% - 48px)); margin: 0 auto; }
+
+      header {
+        height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+      }
+      .brand { display: flex; align-items: center; gap: 10px; color: inherit; font-size: 14px; font-weight: 720; letter-spacing: -.035em; text-decoration: none; }
+      .brand-mark { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 7px; color: white; background: #222421; font-size: 15px; }
+      .nav { display: flex; align-items: center; gap: 24px; }
+      .nav a { color: #555d64; font-size: 12px; text-decoration: none; }
+      .nav a:hover { color: var(--green); text-decoration: underline; }
+
+      .intro { padding: 48px 0 29px; }
+      .eyebrow { color: var(--green); font-size: 10px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+      h1 { margin: 12px 0 10px; font-size: clamp(32px, 5vw, 44px); line-height: 1.08; letter-spacing: -.055em; }
+      .intro p { max-width: 690px; margin: 0; color: #626a71; font-size: 14px; line-height: 1.7; }
+      .install { display: inline-block; margin-top: 18px; padding: 11px 14px; border-radius: 7px; color: #eff2f1; background: var(--code); font-size: 12px; }
+
+      .toc { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 0 28px; border-bottom: 1px solid var(--line); }
+      .toc a { padding: 7px 10px; border: 1px solid #e6e8e9; border-radius: 6px; color: #4c565d; font-size: 11px; text-decoration: none; }
+      .toc a:hover { border-color: #9dc9bb; background: #f7fbf9; }
+
+      .section { padding: 33px 0 39px; border-bottom: 1px solid var(--line); }
+      .section h2 { margin: 0 0 9px; font-size: 21px; letter-spacing: -.035em; }
+      .lead { max-width: 700px; margin: 0 0 22px; color: #626a71; font-size: 13px; line-height: 1.7; }
+      .example { display: grid; grid-template-columns: minmax(190px, .7fr) 1.3fr; gap: 34px; align-items: start; padding: 22px 0; border-top: 1px solid #e8eaec; }
+      .example:first-of-type { border-top: 0; }
+      .kicker { display: block; margin-bottom: 7px; color: var(--green); font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .example h3 { margin: 0 0 8px; font-size: 13px; }
+      .example p { margin: 0; color: #606870; font-size: 12px; line-height: 1.65; }
+      .codebox { position: relative; min-width: 0; }
+      pre {
+        max-height: 420px;
+        overflow: auto;
+        margin: 0;
+        padding: 19px 21px;
+        border-radius: 9px;
+        color: #eef0f1;
+        background: var(--code);
+        font-size: 11px;
+        line-height: 1.75;
+        tab-size: 2;
+        white-space: pre;
+      }
+      .copy {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        min-height: 28px;
+        padding: 0 9px;
+        border: 1px solid #44484c;
+        border-radius: 5px;
+        color: #e4e6e8;
+        background: #25282b;
+        cursor: pointer;
+        font-size: 10px;
+      }
+      .copy:hover { background: #34383b; }
+      .note { margin-top: 11px !important; padding: 10px 12px; border-left: 2px solid #16866a; background: #f6faf8; }
+      .table-wrap { overflow-x: auto; }
+      table { width: 100%; border-collapse: collapse; font-size: 12px; }
+      th, td { padding: 11px 9px; border-top: 1px solid #e8eaec; text-align: left; vertical-align: top; }
+      th { color: #626a71; font-weight: 650; }
+      td code { color: #136b57; font-size: 11px; }
+      .shape-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; }
+      .shape-card { padding: 18px 12px; border: 1px solid #e4e7e9; border-radius: 8px; text-align: center; }
+      .shape-sample { display: inline-block; min-width: 60px; padding: 7px 12px; color: white; background: #16866a; font-size: 11px; }
+      .shape-square { border-radius: 0; }
+      .shape-rounded { border-radius: 3px; }
+      .shape-dots { border-radius: 999px; }
+      .shape-circle { width: 38px; min-width: 38px; height: 38px; display: inline-grid; place-items: center; padding: 0; border-radius: 50%; }
+      .shape-name { display: block; margin-top: 10px; color: #69727a; font-size: 11px; }
+      footer { padding: 18px 0 28px; color: #777f85; font-size: 11px; }
+      footer a { margin-right: 14px; }
+      .status { min-height: 15px; margin-top: 6px; color: #16866a; font-size: 11px; }
+
+      @media (max-width: 720px) {
+        .shell { width: min(100% - 30px, 600px); }
+        .example { grid-template-columns: 1fr; gap: 12px; }
+        .example p { max-width: 620px; }
+      }
+      @media (max-width: 480px) {
+        header { height: 60px; }
+        .nav { gap: 13px; }
+        .nav a { font-size: 11px; }
+        .intro { padding-top: 37px; }
+        .shape-grid { grid-template-columns: repeat(2, 1fr); }
+        pre { padding: 42px 14px 15px; font-size: 10px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <a class="brand" href="./"><span class="brand-mark" aria-hidden="true">b</span> badge-builder</a>
+        <nav class="nav" aria-label="Site">
+          <a href="./">Studio</a>
+          <a href="#quickstart">Use it</a>
+          <a href="#api">API</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="intro">
+          <span class="eyebrow">Documentation</span>
+          <h1>Use badge-builder in your project.</h1>
+          <p>Generate compact SVG badges with JavaScript. Start with a simple status badge, then customize its shape, CSS, colors, icons, and background as your design needs grow.</p>
+          <code class="install">npm install badge-builder</code>
+        </section>
+
+        <nav class="toc" aria-label="On this page">
+          <a href="#quickstart">Quick start</a>
+          <a href="#rendering">Render with CSS</a>
+          <a href="#blocks">Blocks and shapes</a>
+          <a href="#styling">Gradients and text</a>
+          <a href="#backgrounds">Custom backgrounds</a>
+          <a href="#icons">Icons and motion</a>
+          <a href="#download">Save as SVG</a>
+          <a href="#api">API reference</a>
+          <a href="#http-api">HTTP API</a>
+        </nav>
+
+        <section class="section" id="quickstart">
+          <h2>Quick start</h2>
+          <p class="lead">The classic API is ideal for a two-part status badge. <code>createBadge</code> returns an SVG string and has no runtime dependencies.</p>
+          <div class="example">
+            <div>
+              <span class="kicker">JavaScript</span>
+              <h3>Label and message</h3>
+              <p>Choose a label, message, and a built-in status color. You can also use any 3- or 6-digit hex color.</p>
+            </div>
+            <div class="codebox"><button class="copy" type="button">Copy</button><pre><code>import { createBadge } from "badge-builder";
+
+const svg = createBadge({
+  label: "build",
+  message: "passing",
+  color: "success"
+});</code></pre></div>
+          </div>
+        </section>
+
+        <section class="section" id="rendering">
+          <h2>Render it with your page CSS</h2>
+          <p class="lead">The SVG has intrinsic dimensions. Style its containing element or set a display width on the generated SVG to fit your layout.</p>
+          <div class="example">
+            <div>
+              <span class="kicker">CSS + JavaScript</span>
+              <h3>Size and align the badge</h3>
+              <p>Render package-generated SVG into a dedicated element. The example uses <code>innerHTML</code> only for the trusted string returned by this library.</p>
+              <p class="note">For untrusted text or user-created SVG, do not insert arbitrary markup into <code>innerHTML</code>.</p>
+            </div>
+            <div class="codebox"><button class="copy" type="button">Copy</button><pre><code>/* Your app stylesheet */
+.badge-slot {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+}
+
+.badge-slot svg {
+  display: block;
+  width: 220px;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Your app JavaScript */
+import { createBadge } from "badge-builder";
+
+document.querySelector(".badge-slot").innerHTML =
+  createBadge({ label: "coverage", message: "92%", color: "info" });</code></pre></div>
+          </div>
+        </section>
+
+        <section class="section" id="blocks">
+          <h2>Blocks and shapes</h2>
+          <p class="lead">Use one to six blocks when you want independent text and colors. Choose a silhouette with the <code>shape</code> option.</p>
+          <div class="shape-grid" aria-label="Available badge shapes">
+            <div class="shape-card"><span class="shape-sample shape-square">ready</span><span class="shape-name">square</span></div>
+            <div class="shape-card"><span class="shape-sample shape-rounded">ready</span><span class="shape-name">rounded</span></div>
+            <div class="shape-card"><span class="shape-sample shape-dots">ready</span><span class="shape-name">dots (pill)</span></div>
+            <div class="shape-card"><span class="shape-sample shape-circle">✓</span><span class="shape-name">circle</span></div>
+          </div>
+          <div class="example">
+            <div>
+              <span class="kicker">JavaScript</span>
+              <h3>Compose multiple segments</h3>
+              <p>Each block accepts text, a color, and optionally a text/emoji icon or a path-only SVG icon. Circle badges use a single short label or icon.</p>
+            </div>
+            <div class="codebox"><button class="copy" type="button">Copy</button><pre><code>const svg = createBadge({
+  blocks: [
+    { text: "build", color: "#333" },
+    { text: "passing", color: "success" },
+    { text: "coverage", color: "info", icon: "✓" }
+  ],
+  shape: "dots"
+});
+
+// Other shapes: "square", "rounded", "circle"
+const dot = createBadge({
+  blocks: [{ text: "✓", color: "success" }],
+  shape: "circle"
+});</code></pre></div>
+          </div>
+        </section>
+
+        <section class="section" id="styling">
+          <h2>Gradients, borders, and text styling</h2>
+          <p class="lead">Use built-in options for segment fills and outlines. <code>customCss</code> changes badge text only; it is validated against an allowlist and is not a general CSS injection point.</p>
+          <div class="example">
+            <div>
+              <span class="kicker">JavaScript</span>
+              <h3>Apply a gradient and local font</h3>
+              <p>The font-family is written into the SVG but not downloaded. If it is not available on the viewing device, its fallback is used.</p>
+            </div>
+            <div class="codebox"><button class="copy" type="button">Copy</button><pre><code>const svg = createBadge({
+  blocks: [
+    { text: "release", color: "#333" },
+    { text: "v2.0", color: "info" }
+  ],
+  gradient: {
+    from: "#7c3aed",
+    to: "#ec4899",
+    direction: "horizontal",
+    blockIndex: 1
+  },
+  borderColor: "#242424",
+  borderWidth: 1,
+  fontFamily: "Inter, sans-serif",
+  fontSize: 12,
+  customCss: "font-weight: 700; text-transform: uppercase"
+});</code></pre></div>
+          </div>
+          <div class="example">
+            <div>
+              <span class="kicker">Allowed text CSS</span>
+              <h3>Keep text styles predictable</h3>
+              <p>Only these declarations and bounded values are supported:</p>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Property</th><th>Allowed values</th></tr></thead>
+                <tbody>
+                  <tr><td><code>font-size</code></td><td>8–18px</td></tr>
+                  <tr><td><code>font-weight</code></td><td>normal, bold, or 100–900</td></tr>
+                  <tr><td><code>font-style</code></td><td>normal, italic, oblique</td></tr>
+                  <tr><td><code>letter-spacing</code></td><td>px or em within a small range</td></tr>
+                  <tr><td><code>text-transform</code></td><td>none, uppercase, lowercase, capitalize</td></tr>
+                  <tr><td><code>text-decoration</code></td><td>none, underline, line-through</td></tr>
+                  <tr><td><code>opacity</code></td><td>0–1</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="backgrounds">
+          <h2>Use a custom background image</h2>
+          <p class="lead">Images are embedded into the SVG as base64 data, so the finished badge is self-contained. PNG, JPEG, and WebP files up to 512 KB are supported. External image URLs and SVG images are rejected.</p>
+          <div class="example">
+            <div>
+              <span class="kicker">Browser file input</span>
+              <h3>Read a local image</h3>
+              <p>Convert a user-selected file to a data URI, then pass it to <code>backgroundImage</code>. The library validates the data URI format and size.</p>
+              <p class="note">File selection stays in the browser; this example does not upload the image to a server.</p>
+            </div>
+            <div class="codebox"><button class="copy" type="button">Copy</button><pre><code>import { createBadge } from "badge-builder";
+
+async function badgeWithImage(file) {
+  const allowedTypes = ["image/png", "image/jpeg", "image/webp"];
+  if (!allowedTypes.includes(file.type)) {
+    throw new TypeError("Choose a PNG, JPEG, or WebP image");
+  }
+  if (file.size > 512 * 1024) {
+    throw new RangeError("Image must be 512 KB or smaller");
+  }
+
+  const data = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => resolve(reader.result));
+    reader.addEventListener("error", () => reject(reader.error));
+    reader.readAsDataURL(file);
+  });
+
+  return createBadge({
+    blocks: [{ text: "featured", color: "#333" }],
+    backgroundImage: data
+  });
+}
+
+const file = document.querySelector("#image").files[0];
+if (file) {
+  document.querySelector("#preview").innerHTML =
+    await badgeWithImage(file);
+}</code></pre></div>
+          </div>
+        </section>
+
+        <section class="section" id="icons">
+          <h2>Icons and animation</h2>
+          <p class="lead">Icons can be short text/emoji or a path-only SVG object. Animation is opt-in and stops for users who request reduced motion.</p>
+          <div class="example">
+            <div>
+              <span class="kicker">JavaScript</span>
+              <h3>Add a path icon or gentle pulse</h3>
+              <p>Only SVG path data is accepted for vector icons—arbitrary SVG markup is intentionally not allowed.</p>
+            </div>
+            <div class="codebox"><button class="copy" type="button">Copy</button><pre><code>const svg = createBadge({
+  blocks: [{
+    text: "ready",
+    color: "success",
+    icon: {
+      path: "M12 2L2 22h20L12 2z",
+      viewBox: "0 0 24 24"
+    }
+  }],
+  animated: true
+});</code></pre></div>
+          </div>
+        </section>
+
+        <section class="section" id="download">
+          <h2>Download the SVG</h2>
+          <p class="lead">Save the generated string directly as an SVG file in the browser or write it to disk in Node.js.</p>
+          <div class="example">
+            <div>
+              <span class="kicker">Browser</span>
+              <h3>Download from the page</h3>
+              <p>Create a temporary Blob URL, trigger a download, then release the URL.</p>
+            </div>
+            <div class="codebox"><button class="copy" type="button">Copy</button><pre><code>const svg = createBadge({
+  label: "build",
+  message: "passing",
+  color: "success"
+});
+
+const url = URL.createObjectURL(
+  new Blob([svg], { type: "image/svg+xml" })
+);
+const link = document.createElement("a");
+link.href = url;
+link.download = "build-status.svg";
+link.click();
+URL.revokeObjectURL(url);</code></pre></div>
+          </div>
+          <div class="example">
+            <div>
+              <span class="kicker">Node.js</span>
+              <h3>Write it to disk</h3>
+              <p>The returned SVG can be stored, served as a static file, or included in generated documentation.</p>
+            </div>
+            <div class="codebox"><button class="copy" type="button">Copy</button><pre><code>import { writeFile } from "node:fs/promises";
+import { createBadge } from "badge-builder";
+
+const svg = createBadge({
+  label: "tests",
+  message: "passing",
+  color: "success",
+  shape: "rounded"
+});
+
+await writeFile("tests.svg", svg, "utf8");</code></pre></div>
+          </div>
+        </section>
+
+        <section class="section" id="api">
+          <h2>API reference</h2>
+          <p class="lead">All options are optional except the classic label/message pair or the blocks array. Invalid values throw a descriptive <code>TypeError</code>.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Option</th><th>Type</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>label</code>, <code>message</code></td><td>string</td><td>Required for the classic two-segment badge form.</td></tr>
+                <tr><td><code>color</code></td><td>status or hex</td><td>Message color: success, error/failure, warning, info, neutral, or #RGB/#RRGGBB.</td></tr>
+                <tr><td><code>blocks</code></td><td>array</td><td>One to six objects with text, optional color, and optional icon.</td></tr>
+                <tr><td><code>shape</code></td><td>string</td><td>rounded (default), square, dots (pill), or circle (one short block).</td></tr>
+                <tr><td><code>gradient</code></td><td>object</td><td>from/to colors, optional direction and blockIndex; defaults to the last block.</td></tr>
+                <tr><td><code>borderColor</code></td><td>hex</td><td>Optional outline color; enable it with any valid hex value.</td></tr>
+                <tr><td><code>borderWidth</code></td><td>number</td><td>Outline width from 0 to 4; defaults to 1 when a border color is set.</td></tr>
+                <tr><td><code>fontFamily</code>, <code>fontSize</code></td><td>string, number</td><td>Local font family list and 8–14px font size. No remote font is loaded.</td></tr>
+                <tr><td><code>customCss</code></td><td>string</td><td>Validated text-only CSS declarations from the allowlist above.</td></tr>
+                <tr><td><code>backgroundImage</code></td><td>data URI</td><td>Embedded PNG, JPEG, or WebP image up to 512 KB; last block by default.</td></tr>
+                <tr><td><code>animated</code></td><td>boolean</td><td>Enable a reduced-motion-aware opacity pulse.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="http-api">
+          <h2>HTTP API</h2>
+          <p class="lead">The Worker in <code>worker/src/index.js</code> serves the same badges over HTTP. Responses are <code>image/svg+xml</code> with CORS enabled and edge caching, so a badge URL can be embedded directly in Markdown or HTML.</p>
+          <div class="example">
+            <div>
+              <span class="kicker">Markdown / HTML</span>
+              <h3>Request or embed a badge</h3>
+              <p>Use the query form or the <code>/badge/:label/:message</code> shorthand. Complex options such as <code>blocks</code> and <code>gradient</code> are URL-encoded JSON.</p>
+            </div>
+            <div class="codebox"><button class="copy" type="button">Copy</button><pre><code>https://&lt;worker-host&gt;/badge?label=build&amp;message=passing&amp;color=success
+
+https://&lt;worker-host&gt;/badge/build/passing?color=success&amp;shape=dots
+
+&lt;img src="https://&lt;worker-host&gt;/badge/build/passing?color=success"
+     alt="build: passing"&gt;</code></pre></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>label</code>, <code>message</code>, <code>color</code></td><td>Classic two-part badge. Required unless <code>blocks</code> is present.</td></tr>
+                <tr><td><code>blocks</code></td><td>URL-encoded JSON array of <code>{ text, color?, icon? }</code> objects, same as the JavaScript API.</td></tr>
+                <tr><td><code>shape</code></td><td>rounded, square, dots, or circle.</td></tr>
+                <tr><td><code>gradient</code></td><td>URL-encoded JSON <code>{ from, to, direction?, blockIndex? }</code>.</td></tr>
+                <tr><td><code>fontFamily</code>, <code>fontSize</code></td><td>Local font list and 8–14px size.</td></tr>
+                <tr><td><code>borderColor</code>, <code>borderWidth</code></td><td>Outline color and 0–4 width.</td></tr>
+                <tr><td><code>animated</code>, <code>customCss</code></td><td>Reduced-motion-aware pulse and allowlisted text declarations.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="example">
+            <div>
+              <span class="kicker">Deploy</span>
+              <h3>Run it on Cloudflare Workers</h3>
+              <p>Deploy from the <code>worker/</code> directory; Wrangler bundles the library into the Worker. Use Wrangler or the Cloudflare dashboard to attach a custom domain.</p>
+              <p class="note">Invalid input returns a JSON error with a 400 status. <code>HEAD</code> is supported, other methods return 405, and <code>backgroundImage</code> is not accepted over HTTP.</p>
+            </div>
+            <div class="codebox"><button class="copy" type="button">Copy</button><pre><code>cd worker
+npm install
+npm run dev
+
+# After signing in with: npx wrangler login
+npm run deploy</code></pre></div>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <a href="./">Open the badge studio</a>
+        <a href="https://www.npmjs.com/package/badge-builder">npm package</a>
+        <span>Generated locally in your browser · MIT</span>
+        <div class="status" id="copy-status" role="status" aria-live="polite"></div>
+      </footer>
+    </div>
+    <script>
+      const copyStatus = document.querySelector("#copy-status");
+      document.querySelectorAll(".codebox").forEach((box) => {
+        box.querySelector(".copy").addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(box.querySelector("code").textContent);
+            copyStatus.textContent = "Code copied.";
+          } catch {
+            copyStatus.textContent = "Clipboard unavailable. Select and copy the code instead.";
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

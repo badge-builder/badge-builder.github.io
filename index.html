@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f5f2">
+    <meta name="description" content="Build, style, copy, and download lightweight SVG status badges in your browser with badge-builder.">
+    <title>badge-builder — Live badge studio</title>
+    <!-- The published package is pinned on jsDelivr and hash-checked. -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <script type="importmap">
+      {
+        "imports": {
+          "badge-builder": "https://cdn.jsdelivr.net/npm/badge-builder@0.2.0/src/index.js"
+        },
+        "integrity": {
+          "https://cdn.jsdelivr.net/npm/badge-builder@0.2.0/src/index.js": "sha384-uirjs888hEsb2Fkr3uIbqrELUIvKKSDGEYqiZhAkPlQx3c38GRXuENZCV6+15BNh"
+        }
+      }
+    </script>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #17191c;
+        background: #fff;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        --muted: #687078;
+        --line: #e3e5e7;
+        --green: #16866a;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        min-width: 320px;
+        margin: 0;
+        background: #fff;
+      }
+
+      button, input, select { font: inherit; }
+      button { cursor: pointer; }
+
+      .shell { width: min(1010px, calc(100% - 48px)); margin: 0 auto; }
+
+      header {
+        height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 720; letter-spacing: -.035em; text-decoration: none; color: inherit; }
+      .brand-mark {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        border-radius: 7px;
+        color: white;
+        background: #222421;
+        font-size: 15px;
+      }
+
+      .site-nav { display: flex; align-items: center; gap: 25px; }
+      .site-nav a { color: #555d64; font-size: 12px; text-decoration: none; }
+      .site-nav a:hover { color: #128267; text-decoration: underline; }
+
+      .intro { padding: 55px 0 31px; }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #16866a;
+        font-size: 11px;
+        font-weight: 750;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+      }
+      .eyebrow::before { width: 7px; height: 7px; border-radius: 50%; background: #16866a; content: ""; }
+      h1 { margin: 12px 0 9px; font-size: clamp(34px, 5vw, 46px); line-height: 1.08; letter-spacing: -.055em; font-weight: 690; }
+      .intro p { max-width: 650px; margin: 0; color: #626a71; font-size: 14px; line-height: 1.7; }
+      .privacy-note { margin-top: 12px !important; color: #16866a !important; font-size: 12px !important; }
+
+      .studio {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 340px;
+        overflow: hidden;
+        border: 1px solid #e1e4e6;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 8px 24px rgba(24, 32, 38, .045);
+      }
+
+      .preview { min-width: 0; padding: 25px 27px 27px; }
+      .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+      .section-heading h2, .controls h2 { margin: 0; font-size: 13px; font-weight: 690; letter-spacing: -.015em; }
+      .live { display: flex; align-items: center; gap: 6px; color: #81827d; font-size: 11px; }
+      .live::before { width: 6px; height: 6px; border-radius: 50%; background: #67b46d; content: ""; }
+      .canvas {
+        min-height: 300px;
+        display: grid;
+        place-items: center;
+        margin-top: 20px;
+        border: 1px solid #eeeee9;
+        border-radius: 10px;
+        background-color: #fafbfc;
+        background-image: linear-gradient(45deg, #f1f3f5 25%, transparent 25%), linear-gradient(-45deg, #f1f3f5 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f1f3f5 75%), linear-gradient(-45deg, transparent 75%, #f1f3f5 75%);
+        background-position: 0 0, 0 6px, 6px -6px, -6px 0;
+        background-size: 12px 12px;
+      }
+      #badge-preview { width: 100%; padding: 28px; display: grid; place-items: center; }
+      #badge-preview svg { display: block; width: min(360px, 100%); height: auto; max-width: none; filter: drop-shadow(0 3px 4px rgba(27, 30, 25, .15)); }
+      .badge-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 14px 1px 0; color: #888983; font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .size-pill { padding: 5px 8px; border: 1px solid #ecece7; border-radius: 6px; background: #fafaf8; }
+
+      .controls { padding: 25px 21px; border-left: 1px solid #e7e9eb; background: #fff; }
+      .controls h2 { margin: 0 0 20px; }
+      .field { display: block; margin-top: 15px; }
+      .field-label { display: block; margin-bottom: 7px; color: #62635e; font-size: 11px; font-weight: 640; }
+      .field input, .field select {
+        width: 100%;
+        height: 38px;
+        padding: 0 10px;
+        border: 1px solid #e5e5df;
+        border-radius: 7px;
+        outline: none;
+        color: #252623;
+        background: white;
+        font-size: 12px;
+      }
+      .field input:focus, .field select:focus { border-color: #94b28b; box-shadow: 0 0 0 3px rgba(116, 160, 104, .12); }
+      .color-row { display: flex; gap: 8px; }
+      .color-row select { flex: 1; }
+      .color-row input[type="color"] { width: 42px; padding: 4px; }
+      .field textarea {
+        width: 100%;
+        min-height: 66px;
+        resize: vertical;
+        padding: 9px 10px;
+        border: 1px solid #e5e5df;
+        border-radius: 7px;
+        outline: none;
+        color: #252623;
+        background: white;
+        font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      .block-list { display: grid; gap: 8px; margin-top: 12px; }
+      .block-row { padding: 10px; border: 1px solid #e8e8e2; border-radius: 8px; background: white; }
+      .block-row-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; color: #777875; font-size: 10px; font-weight: 650; }
+      .block-fields { display: grid; grid-template-columns: minmax(0, 1fr) 36px; gap: 7px; }
+      .block-fields input { min-width: 0; width: 100%; height: 34px; padding: 0 8px; border: 1px solid #e5e5df; border-radius: 6px; font-size: 11px; }
+      .block-fields input[type="color"] { padding: 3px; }
+      .block-fields input:last-child:nth-child(3) { grid-column: 1 / -1; }
+      .remove-block { padding: 3px 6px; border: 0; border-radius: 4px; color: #8b514b; background: transparent; font-size: 10px; }
+      .remove-block:hover { background: #fbefed; }
+      .add-block { width: 100%; margin-top: 9px; }
+      .advanced { margin-top: 15px; border-top: 1px solid #e9e9e3; }
+      .advanced summary { padding: 13px 0 0; color: #555650; cursor: pointer; font-size: 11px; font-weight: 670; }
+      .check-field { display: flex; align-items: center; gap: 8px; margin-top: 12px; color: #5e5f5a; font-size: 11px; }
+      .check-field input { accent-color: #53744d; }
+      .effect-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 9px; }
+      .effect-controls .field { margin-top: 0; }
+      .effect-controls .field input, .effect-controls .field select { height: 34px; padding: 0 7px; font-size: 10px; }
+      .help-text { margin: 6px 0 0; color: #85867f; font-size: 10px; line-height: 1.45; }
+
+      .actions { display: flex; gap: 8px; margin-top: 21px; }
+      .action {
+        min-height: 36px;
+        padding: 0 12px;
+        border: 1px solid #e3e3dd;
+        border-radius: 7px;
+        color: #33342f;
+        background: white;
+        font-size: 11px;
+        font-weight: 650;
+      }
+      .action:hover { background: #f5f5f1; }
+      .action.primary { border-color: #262824; color: white; background: #262824; }
+      .action.primary:hover { background: #3b3d38; }
+      .action:focus-visible, .preset:focus-visible { outline: 3px solid rgba(116, 160, 104, .35); outline-offset: 2px; }
+      #copy-status { min-height: 14px; margin: 8px 0 0; color: #5b7d53; font-size: 10px; }
+
+      .code-wrap { margin-top: 20px; overflow: hidden; border: 1px solid #e9e9e3; border-radius: 8px; background: #f8f8f5; }
+      .code-head { padding: 8px 10px; border-bottom: 1px solid #e9e9e3; color: #85867f; font: 10px ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .code-wrap pre { max-height: 92px; overflow: auto; margin: 0; padding: 10px; color: #54564f; font: 10px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+      .examples { padding: 28px 0 40px; }
+      .examples-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+      .examples-head h2 { margin: 0; font-size: 13px; letter-spacing: -.02em; }
+      .examples-head p { margin: 0; color: #898a84; font-size: 11px; }
+      .preset-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+      .preset {
+        min-width: 0;
+        min-height: 76px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 11px;
+        padding: 12px;
+        border: 1px solid #e6e6e0;
+        border-radius: 9px;
+        background: rgba(255,255,255,.72);
+        text-align: left;
+      }
+      .preset:hover { border-color: #c9d5c3; background: white; }
+      .preset svg { max-width: 100%; height: auto; }
+      .preset span { color: #888983; font-size: 10px; }
+      .docs-section { padding: 34px 0 42px; border-top: 1px solid var(--line); }
+      .docs-section h2 { margin: 0 0 18px; font-size: 21px; letter-spacing: -.035em; }
+      .docs-lead { max-width: 690px; margin: -7px 0 22px; color: #646d74; font-size: 13px; line-height: 1.7; }
+      footer { padding: 18px 0 26px; border-top: 1px solid var(--line); color: #777f85; font-size: 11px; }
+
+      @media (max-width: 760px) {
+        .shell { width: min(100% - 28px, 560px); }
+        .intro { padding: 45px 0 26px; }
+        .studio { grid-template-columns: 1fr; }
+        .preview { padding: 22px 18px; }
+        .controls { border-top: 1px solid #eeeee9; border-left: 0; padding: 22px 18px; }
+        .canvas { min-height: 230px; }
+        #badge-preview svg { width: min(300px, 100%); }
+        .preset-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 480px) {
+        .shell { width: min(100% - 28px, 560px); }
+        header { height: 60px; }
+        .site-nav { gap: 12px; }
+        .site-nav a { font-size: 11px; }
+        .intro { padding-top: 39px; }
+        .preview { padding: 18px 14px; }
+        .controls { padding: 20px 14px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">b</span> badge-builder</a>
+        <nav class="site-nav" aria-label="Site">
+          <a href="./">Studio</a>
+          <a href="docs.html">Docs</a>
+          <a href="docs.html#api">API</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="intro" id="top" aria-labelledby="page-title">
+          <span class="eyebrow">Small, portable SVGs</span>
+          <h1 id="page-title">Make a badge. Make it yours.</h1>
+          <p>Build status badges for READMEs, dashboards, and product UIs. Choose a shape, style the blocks, then copy or download the SVG.</p>
+          <p class="privacy-note">Everything stays in your browser. No account, external font, or remote image upload.</p>
+        </section>
+
+        <section class="studio" aria-label="Badge editor">
+          <div class="preview">
+            <div class="section-heading">
+              <h2>Preview</h2>
+              <span class="live">updates as you type</span>
+            </div>
+            <div class="canvas"><div id="badge-preview" aria-live="polite"></div></div>
+            <div class="badge-meta"><span id="badge-description">build / passing</span><span class="size-pill" id="badge-size">— × 20 px</span></div>
+          </div>
+
+          <form class="controls" id="badge-form">
+            <h2>Customize</h2>
+            <label class="field">
+              <span class="field-label">Badge layout</span>
+              <select id="badge-type">
+                <option value="classic">Label + message</option>
+                <option value="single">One block</option>
+                <option value="multi">Multiple blocks</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">Shape</span>
+              <select id="shape">
+                <option value="rounded">Rounded</option>
+                <option value="square">Square</option>
+                <option value="dots">Pill / dots</option>
+                <option value="circle">Circle (single block)</option>
+              </select>
+            </label>
+            <div id="classic-fields">
+              <label class="field">
+                <span class="field-label">Label</span>
+                <input id="label" name="label" value="build" maxlength="48" autocomplete="off">
+              </label>
+              <label class="field">
+                <span class="field-label">Message</span>
+                <input id="message" name="message" value="passing" maxlength="48" autocomplete="off">
+              </label>
+              <label class="field">
+                <span class="field-label">Message color</span>
+                <span class="color-row">
+                  <select id="color" name="color">
+                    <option value="success">Success</option>
+                    <option value="error">Error</option>
+                    <option value="warning">Warning</option>
+                    <option value="info">Info</option>
+                    <option value="neutral">Neutral</option>
+                    <option value="custom">Custom</option>
+                  </select>
+                  <input id="custom-color" type="color" value="#2ea44f" aria-label="Choose custom badge color" hidden>
+                </span>
+              </label>
+            </div>
+            <div id="block-fields" hidden>
+              <div id="block-list" class="block-list"></div>
+              <button class="action add-block" type="button" id="add-block">Add block</button>
+              <p class="help-text">Up to 6 blocks. Each can use a text/emoji icon.</p>
+            </div>
+            <details class="advanced">
+              <summary>Gradient, border, motion &amp; more</summary>
+              <label class="check-field"><input id="use-gradient" type="checkbox"> Use gradient on last block</label>
+              <div id="gradient-controls" class="effect-controls" hidden>
+                <label class="field"><span class="field-label">From</span><input id="gradient-from" type="color" value="#7c3aed"></label>
+                <label class="field"><span class="field-label">To</span><input id="gradient-to" type="color" value="#ec4899"></label>
+                <label class="field"><span class="field-label">Direction</span><select id="gradient-direction"><option value="horizontal">Horizontal</option><option value="vertical">Vertical</option></select></label>
+              </div>
+              <label class="check-field"><input id="use-border" type="checkbox"> Add border</label>
+              <label class="field" id="border-control" hidden><span class="field-label">Border color</span><input id="border-color" type="color" value="#20211f"></label>
+              <label class="check-field"><input id="animated" type="checkbox"> Pulse animation (respects reduced motion)</label>
+              <label class="field"><span class="field-label">Local font family</span><input id="font-family" value="Verdana, sans-serif" maxlength="120"></label>
+              <label class="field"><span class="field-label">Font size: <output id="font-size-label">11px</output></span><input id="font-size" type="range" min="8" max="14" value="11"></label>
+              <label class="field"><span class="field-label">Custom text CSS</span><textarea id="custom-css" placeholder="font-weight: 700;&#10;text-transform: uppercase"></textarea></label>
+              <label class="field"><span class="field-label">Background image (PNG/JPEG/WebP, max 512 KB)</span><input id="background-image" type="file" accept="image/png,image/jpeg,image/webp"></label>
+              <button class="action" type="button" id="remove-background" hidden>Remove image</button>
+              <p class="help-text">Image is embedded in the SVG and fills the last block. No external image/font requests.</p>
+            </details>
+            <div class="actions">
+              <button class="action primary" type="button" id="copy-button">Copy SVG</button>
+              <button class="action" type="button" id="download-button">Download</button>
+            </div>
+            <p id="copy-status" role="status" aria-live="polite"></p>
+            <div class="code-wrap">
+              <div class="code-head">SVG OUTPUT</div>
+              <pre id="svg-output"></pre>
+            </div>
+          </form>
+        </section>
+
+        <section class="examples" aria-labelledby="examples-title">
+          <div class="examples-head">
+            <h2 id="examples-title">A few starting points</h2>
+            <p>Pick one to load it into the editor</p>
+          </div>
+          <div class="preset-grid" id="preset-grid"></div>
+        </section>
+
+        <section class="docs-section" aria-labelledby="docs-title">
+          <h2 id="docs-title">Using badge-builder in your app</h2>
+          <p class="docs-lead">Get started with the live studio, then use the full docs for copyable examples covering CSS, shapes, custom styles, images, icons, downloads, and the HTTP API.</p>
+          <a class="action primary" href="docs.html">Read the full documentation →</a>
+        </section>
+      </main>
+
+      <footer>Generated in your browser with badge-builder · Library via jsDelivr · MIT</footer>
+    </div>
+
+    <script type="module">
+      import { createBadge } from "badge-builder";
+
+      const form = document.querySelector("#badge-form");
+      const labelInput = document.querySelector("#label");
+      const messageInput = document.querySelector("#message");
+      const colorSelect = document.querySelector("#color");
+      const customColorInput = document.querySelector("#custom-color");
+      const badgeType = document.querySelector("#badge-type");
+      const shapeSelect = document.querySelector("#shape");
+      const blockList = document.querySelector("#block-list");
+      const preview = document.querySelector("#badge-preview");
+      const output = document.querySelector("#svg-output");
+      const status = document.querySelector("#copy-status");
+      const initialBlocks = [
+        { text: "build", color: "#555555", icon: "" },
+        { text: "passing", color: "#2ea44f", icon: "" }
+      ];
+      let backgroundImage;
+      const presets = [
+        { label: "build", message: "passing", color: "success", title: "Build passing" },
+        { label: "tests", message: "12 failed", color: "error", title: "Tests failing" },
+        { label: "coverage", message: "87.4%", color: "info", title: "Coverage" },
+        { label: "release", message: "v2.1.0", color: "neutral", title: "Release version" }
+      ];
+
+      function currentBlocks() {
+        return [...blockList.querySelectorAll(".block-row")].map((row) => {
+          const iconPath = row.querySelector("[data-block-icon-path]").value.trim();
+          return {
+            text: row.querySelector("[data-block-text]").value,
+            color: row.querySelector("[data-block-color]").value,
+            icon: iconPath
+              ? { path: iconPath }
+              : row.querySelector("[data-block-icon]").value || undefined
+          };
+        });
+      }
+
+      function renderBlocks(blocks) {
+        blockList.replaceChildren();
+        blocks.slice(0, 6).forEach((block, index) => {
+          const row = document.createElement("div");
+          row.className = "block-row";
+          const heading = document.createElement("div");
+          heading.className = "block-row-head";
+          const title = document.createElement("span");
+          title.textContent = `Block ${index + 1}`;
+          heading.append(title);
+          if (blocks.length > 1) {
+            const remove = document.createElement("button");
+            remove.className = "remove-block";
+            remove.type = "button";
+            remove.textContent = "Remove";
+            remove.setAttribute("aria-label", `Remove block ${index + 1}`);
+            remove.addEventListener("click", () => {
+              const next = currentBlocks();
+              next.splice(index, 1);
+              renderBlocks(next);
+              updateBadge();
+            });
+            heading.append(remove);
+          }
+
+          const fields = document.createElement("div");
+          fields.className = "block-fields";
+          const text = document.createElement("input");
+          text.type = "text";
+          text.maxLength = 48;
+          text.value = block.text;
+          text.placeholder = "Text";
+          text.setAttribute("aria-label", `Block ${index + 1} text`);
+          text.dataset.blockText = "";
+          const color = document.createElement("input");
+          color.type = "color";
+          color.value = block.color;
+          color.setAttribute("aria-label", `Block ${index + 1} color`);
+          color.dataset.blockColor = "";
+          const icon = document.createElement("input");
+          icon.type = "text";
+          icon.maxLength = 8;
+          icon.value = typeof block.icon === "string" ? block.icon : "";
+          icon.placeholder = "Icon (optional, e.g. ✓)";
+          icon.setAttribute("aria-label", `Block ${index + 1} text or emoji icon`);
+          icon.dataset.blockIcon = "";
+          icon.style.gridColumn = "1 / -1";
+          const iconPath = document.createElement("input");
+          iconPath.type = "text";
+          iconPath.maxLength = 256;
+          iconPath.value = typeof block.icon === "object" ? block.icon.path : "";
+          iconPath.placeholder = "SVG path data (optional, e.g. M12 2L2 22h20L12 2z)";
+          iconPath.setAttribute("aria-label", `Block ${index + 1} SVG path icon`);
+          iconPath.dataset.blockIconPath = "";
+          iconPath.style.gridColumn = "1 / -1";
+          fields.append(text, color, icon, iconPath);
+          row.append(heading, fields);
+          blockList.append(row);
+        });
+      }
+
+      function updateLayout() {
+        const multiOption = badgeType.querySelector('option[value="multi"]');
+        multiOption.disabled = shapeSelect.value === "circle";
+        if (shapeSelect.value === "circle" && badgeType.value !== "single") {
+          badgeType.value = "single";
+        }
+        const classic = badgeType.value === "classic";
+        document.querySelector("#classic-fields").hidden = !classic;
+        document.querySelector("#block-fields").hidden = classic;
+        if (!classic && !blockList.querySelector(".block-row")) {
+          renderBlocks([{ text: "ready", color: "#2ea44f", icon: "" }]);
+        } else if (badgeType.value === "single" && currentBlocks().length > 1) {
+          renderBlocks(currentBlocks().slice(0, 1));
+        }
+        if (shapeSelect.value === "circle") {
+          const [first] = currentBlocks();
+          if (first && [...first.text].length > 2 && !first.icon) {
+            first.text = "✓";
+            renderBlocks([first]);
+          }
+        }
+        document.querySelector("#add-block").hidden =
+          badgeType.value === "single" || currentBlocks().length >= 6;
+      }
+
+      function currentOptions() {
+        const blocks = badgeType.value === "classic"
+          ? null
+          : currentBlocks().slice(0, badgeType.value === "single" ? 1 : 6);
+        const options = badgeType.value === "classic"
+          ? {
+              label: labelInput.value,
+              message: messageInput.value,
+              color: colorSelect.value === "custom" ? customColorInput.value : colorSelect.value
+            }
+          : { blocks };
+        options.style = "flat";
+        options.shape = shapeSelect.value;
+        options.animated = document.querySelector("#animated").checked;
+        options.fontFamily = document.querySelector("#font-family").value;
+        options.fontSize = Number(document.querySelector("#font-size").value);
+        const customCss = document.querySelector("#custom-css").value.trim();
+        if (customCss) options.customCss = customCss;
+        if (document.querySelector("#use-border").checked) {
+          options.borderColor = document.querySelector("#border-color").value;
+        }
+        if (document.querySelector("#use-gradient").checked) {
+          options.gradient = {
+            from: document.querySelector("#gradient-from").value,
+            to: document.querySelector("#gradient-to").value,
+            direction: document.querySelector("#gradient-direction").value,
+            blockIndex: (blocks?.length ?? 2) - 1
+          };
+        }
+        if (backgroundImage) options.backgroundImage = backgroundImage;
+        return options;
+      }
+
+      function updateBadge() {
+        try {
+          const options = currentOptions();
+          const badge = createBadge(options);
+          preview.innerHTML = badge;
+          output.textContent = badge;
+          document.querySelector("#copy-button").disabled = false;
+          document.querySelector("#download-button").disabled = false;
+          status.textContent = "";
+          const description = options.blocks
+            ? options.blocks.map((block) => block.text || "…").join(" / ")
+            : `${options.label || "label"} / ${options.message || "message"}`;
+          document.querySelector("#badge-description").textContent = description;
+          const svgElement = preview.querySelector("svg");
+          const svgWidth = Number(svgElement.getAttribute("width"));
+          const svgHeight = Number(svgElement.getAttribute("height"));
+          const availableWidth = Math.max(120, document.querySelector(".canvas").clientWidth - 56);
+          svgElement.style.width = `${Math.min(360, availableWidth, svgWidth * 2.6)}px`;
+          document.querySelector("#badge-size").textContent = `${svgWidth} × ${svgHeight} px`;
+          document.querySelector("#add-block").hidden =
+            badgeType.value === "single" || currentBlocks().length >= 6;
+        } catch (error) {
+          document.querySelector("#copy-button").disabled = true;
+          document.querySelector("#download-button").disabled = true;
+          const message = error instanceof Error ? error.message : "Could not generate badge.";
+          status.textContent = `Not updated: ${message}. The preview shows the last valid badge.`;
+        }
+      }
+
+      function renderPresets() {
+        const grid = document.querySelector("#preset-grid");
+        for (const preset of presets) {
+          const button = document.createElement("button");
+          button.className = "preset";
+          button.type = "button";
+          button.setAttribute("aria-label", `Use ${preset.title} badge`);
+          const badge = createBadge(preset);
+          const badgePreview = document.createElement("span");
+          badgePreview.innerHTML = badge;
+          const caption = document.createElement("span");
+          caption.textContent = preset.title;
+          button.append(badgePreview, caption);
+          button.addEventListener("click", () => {
+            badgeType.value = "classic";
+            updateLayout();
+            labelInput.value = preset.label;
+            messageInput.value = preset.message;
+            colorSelect.value = preset.color;
+            customColorInput.hidden = true;
+            document.querySelector("#use-gradient").checked = false;
+            document.querySelector("#use-border").checked = false;
+            document.querySelector("#animated").checked = false;
+            backgroundImage = undefined;
+            document.querySelector("#remove-background").hidden = true;
+            updateBadge();
+          });
+          grid.append(button);
+        }
+      }
+
+      form.addEventListener("submit", (event) => event.preventDefault());
+      window.addEventListener("resize", updateBadge);
+      form.addEventListener("input", () => {
+        updateBadge();
+      });
+      colorSelect.addEventListener("change", () => {
+        customColorInput.hidden = colorSelect.value !== "custom";
+        updateBadge();
+      });
+      badgeType.addEventListener("change", () => {
+        updateLayout();
+        updateBadge();
+      });
+      shapeSelect.addEventListener("change", () => {
+        if (shapeSelect.value === "circle") {
+          if (badgeType.value === "classic") {
+            const text = [...messageInput.value.trim()];
+            renderBlocks([{ text: text.length > 0 && text.length <= 2 ? text.join("") : "✓", color: "#2ea44f", icon: "" }]);
+          } else {
+            const [first] = currentBlocks();
+            if ([...first.text].length > 2 && !first.icon) first.text = "✓";
+            renderBlocks([first]);
+          }
+          badgeType.value = "single";
+        }
+        updateLayout();
+        updateBadge();
+      });
+      document.querySelector("#add-block").addEventListener("click", () => {
+        const blocks = currentBlocks();
+        if (blocks.length < 6) {
+          blocks.push({ text: "new", color: "#6e7781", icon: "" });
+          renderBlocks(blocks);
+          updateBadge();
+        }
+      });
+      document.querySelector("#use-gradient").addEventListener("change", (event) => {
+        document.querySelector("#gradient-controls").hidden = !event.target.checked;
+        updateBadge();
+      });
+      document.querySelector("#use-border").addEventListener("change", (event) => {
+        document.querySelector("#border-control").hidden = !event.target.checked;
+        updateBadge();
+      });
+      document.querySelector("#font-size").addEventListener("input", (event) => {
+        document.querySelector("#font-size-label").value = `${event.target.value}px`;
+      });
+      document.querySelector("#background-image").addEventListener("change", (event) => {
+        const [file] = event.target.files;
+        if (!file) return;
+        if (file.size > 512 * 1024) {
+          backgroundImage = undefined;
+          status.textContent = "Image must be no larger than 512 KB.";
+          event.target.value = "";
+          return;
+        }
+        if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+          status.textContent = "Choose a PNG, JPEG, or WebP image.";
+          event.target.value = "";
+          return;
+        }
+        const reader = new FileReader();
+        reader.addEventListener("load", () => {
+          backgroundImage = reader.result;
+          document.querySelector("#remove-background").hidden = false;
+          updateBadge();
+        });
+        reader.addEventListener("error", () => {
+          status.textContent = "Could not read the selected image.";
+        });
+        reader.readAsDataURL(file);
+      });
+      document.querySelector("#remove-background").addEventListener("click", () => {
+        backgroundImage = undefined;
+        document.querySelector("#background-image").value = "";
+        document.querySelector("#remove-background").hidden = true;
+        updateBadge();
+      });
+
+      document.querySelector("#copy-button").addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(output.textContent);
+          status.textContent = "SVG copied to clipboard.";
+        } catch {
+          status.textContent = "Clipboard unavailable here. Select and copy the SVG below.";
+        }
+      });
+
+      document.querySelector("#download-button").addEventListener("click", () => {
+        const blob = new Blob([output.textContent], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "badge.svg";
+        link.click();
+        URL.revokeObjectURL(url);
+        status.textContent = "Downloaded badge.svg.";
+      });
+
+      renderBlocks(initialBlocks);
+      updateLayout();
+      renderPresets();
+      updateBadge();
+    </script>
+  </body>
+</html>
